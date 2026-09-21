@@ -1,0 +1,14 @@
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local test artifacts
+*.log
+state.tsv
+*.tmp

@@ -1,0 +1,53 @@
+[Unit]
+Description=PortScan Defender - Automated Port Scan Detection & Blocking
+Documentation=file:///opt/portscan-defender/README.md
+After=network.target nftables.service
+Wants=nftables.service
+Before=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+
+# --- Hardening (systemd sandbox) ---------------------------------------
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @obsolete
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW CAP_DAC_OVERRIDE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+
+# Writable paths required by the daemon
+ReadWritePaths=/var/lib/portscan-defender /var/log/portscan-defender
+ReadOnlyPaths=/opt/portscan-defender
+
+# --- Process lifecycle --------------------------------------------------
+ExecStart=/opt/portscan-defender/portscan-defender.sh
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=portscan-defender
+
+# --- Resource limits ----------------------------------------------------
+LimitNOFILE=65536
+LimitNPROC=128
+MemoryMax=256M
+CPUQuota=30%
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,27 @@
+# ============================================================================
+# Port Whitelist - Ports that are safe to scan without triggering a block.
+# ============================================================================
+# Format:
+#   80            # single port
+#   8000-8100     # inclusive range
+#   # comment
+#
+# These ports are excluded at the nftables level (no log generated).
+# ============================================================================
+
+# --- Public web services ---
+80
+443
+
+# --- DNS / NTP ---
+53
+123
+
+# --- Uncomment if internal-only ---
+# 22            # SSH - keep commented if you want to detect SSH scans
+# 3306          # MySQL
+# 5432          # PostgreSQL
+# 6379          # Redis
+
+# --- Example of a service range ---
+# 8000-8100
